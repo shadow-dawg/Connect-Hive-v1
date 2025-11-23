@@ -1,10 +1,21 @@
 import { GoogleGenAI, Type } from "@google/genai";
 import { AIResponse } from "../types";
 
-const apiKey = process.env.API_KEY || '';
+// Safely retrieve the key to prevent runtime crashes if process is undefined in the browser
+const getApiKey = (): string => {
+  try {
+    if (typeof process !== 'undefined' && process.env) {
+      return process.env.API_KEY || '';
+    }
+  } catch (e) {
+    // process is not defined
+  }
+  return '';
+};
 
-// Initialize client securely. In a real app, this should be proxied through a backend
-// to avoid exposing the key, but for this demo/frontend-only task, we use env.
+const apiKey = getApiKey();
+
+// Initialize client securely.
 const ai = new GoogleGenAI({ apiKey });
 
 export const generateMatchmakingSuggestion = async (
